@@ -8,6 +8,10 @@ import java.util.Arrays;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
+import aed.CustomComparator;
+import aed.Ciudad;
+import aed.Heap;
+
 public class TestPropios {
 
     int cantCiudades;
@@ -28,7 +32,8 @@ public class TestPropios {
         }
     }
 
-    @Test   
+    @Test
+    //Test del BestEffort   
     void despachar_mas_redituable_sin_traslados(){
         Traslado[] unTraslado = new Traslado[]{new Traslado(0, 0, 1, 1000, 1)};
             BestEffort sis = new BestEffort(2, unTraslado);
@@ -65,7 +70,7 @@ public class TestPropios {
                                             new Traslado(12, 2, 1, 20, 1),
                                         };
         BestEffort sis = new BestEffort(7, listaTraslados);
-        //al no haber echo ningun despacho, todos tienen ganancia y perdida 0 
+        //al no haber echo ningun despacho, todos tienen ganancia y perdida 0
             assertSetEquals(new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6)),sis.ciudadesConMayorGanancia());
             assertSetEquals(new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6)),sis.ciudadesConMayorPerdida());
             assertEquals(0 ,sis.ciudadConMayorSuperavit());
@@ -95,6 +100,71 @@ public class TestPropios {
             assertSetEquals(sis.ciudadesConMayorGanancia(),nuevosis.ciudadesConMayorGanancia());
             assertSetEquals(sis.ciudadesConMayorPerdida(),nuevosis.ciudadesConMayorPerdida());
             assertEquals(sis.ciudadConMayorSuperavit(),nuevosis.ciudadConMayorSuperavit());
-            equals(sis.despacharMasAntiguos(1).toString().compareTo(nuevosis.despacharMasAntiguos(1).toString())==0);
+            assertEquals(Arrays.equals(sis.despacharMasAntiguos(1), nuevosis.despacharMasAntiguos(1)), true);
         }
-    }   
+    @Test
+    //Test del heap y comparadores
+        void ver_raiz(){
+            ArrayList<Ciudad> ListaCiudades = new ArrayList<Ciudad>();
+            Ciudad a = new Ciudad(0);
+            Ciudad b = new Ciudad(1);
+            Ciudad c = new Ciudad(2);
+            a.sumarBalance(50);
+            b.sumarBalance(20);
+            c.sumarBalance(50);
+            ListaCiudades.add(a);
+            ListaCiudades.add(b);
+            ListaCiudades.add(c);
+            Heap heapbalance = new Heap<>(ListaCiudades, CustomComparator.BY_BALANCE);
+            //la raiz deberia ser el de mayor balance, en caso de empate devuelve el de menor id
+            assertEquals(heapbalance.getRaiz() ,a);
+     
+            ArrayList<Traslado> listaTraslados = new ArrayList<Traslado>();
+            Traslado aa = new Traslado(1, 0, 1, 100, 10);
+            Traslado bb = new Traslado(2, 0, 1, 500, 20);
+            Traslado cc = new Traslado(3, 3, 4, 500, 5);
+            listaTraslados.add(aa);
+            listaTraslados.add(bb);
+            listaTraslados.add(cc);
+            Heap heapganancia = new Heap<>(listaTraslados, CustomComparator.BY_GANANCIA);
+            //la raiz deberia ser el de mayor ganancia neta, en caso de empate devuelve el de menor id
+            assertEquals(heapganancia.getRaiz() ,bb);
+
+            Heap heaptime = new Heap<>(listaTraslados, CustomComparator.BY_TIMESTAMP);
+            listaTraslados.add(aa);
+            listaTraslados.add(bb);
+            listaTraslados.add(cc);
+            //la raiz deberia ser el de menor timestamp, no puede empatar 
+            assertEquals(heaptime.getRaiz() ,cc);
+        }
+    @Test
+        void eliminar_raiz(){
+            ArrayList<Traslado> listaTraslados = new ArrayList<Traslado>();
+            listaTraslados.add(new Traslado(1, 0, 1, 100, 10));
+            listaTraslados.add(new Traslado(2, 0, 1, 400, 20));
+            listaTraslados.add(new Traslado(3, 3, 4, 500, 50));
+            listaTraslados.add(new Traslado(4, 4, 3, 500, 11));
+            listaTraslados.add(new Traslado(5, 1, 0, 1000, 40));
+            listaTraslados.add(new Traslado(6, 1, 0, 1500, 41));
+            listaTraslados.add(new Traslado(7, 6, 3, 2000, 42));
+            listaTraslados.add(new Traslado(8, 3, 2, 20, 43));
+            listaTraslados.add(new Traslado(9, 5, 4, 200, 44));
+            listaTraslados.add(new Traslado(10, 3, 6, 200, 12));
+            listaTraslados.add(new Traslado(11, 5, 6, 200, 2));
+            listaTraslados.add(new Traslado(12, 2, 1, 20, 1));
+            
+            Heap heap = new Heap<>(listaTraslados, CustomComparator.BY_GANANCIA);
+            int tamaño = heap.getSize();
+            assertEquals(tamaño, 12);
+            heap.eliminar();
+            //deberia eliminar la raiz que era el trasaldo de 2000 y ahora la raiz deberia ser e traslado con gananacia 1500
+            Traslado raiz = new Traslado(cantCiudades, cantCiudades, cantCiudades, cantCiudades, cantCiudades);
+            raiz=(Traslado) heap.getRaiz();
+            assertEquals(raiz.gananciaNeta,1500);
+        }
+
+        void eliminar_elemento_del_medio(){}
+        void eliminar_ultimo_elemento_agregado (){}
+
+
+    }
