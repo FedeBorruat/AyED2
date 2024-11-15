@@ -65,8 +65,7 @@ public class TestPropios {
                                             new Traslado(12, 2, 1, 20, 1),
                                         };
         BestEffort sis = new BestEffort(7, listaTraslados);
-        //al no haber echo ningun despacho, todos tienen ganancia y perdida 0
-        // tienen que estar ordenados???
+        //al no haber echo ningun despacho, todos tienen ganancia y perdida 0 
             assertSetEquals(new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6)),sis.ciudadesConMayorGanancia());
             assertSetEquals(new ArrayList<>(Arrays.asList(0, 1, 2, 3, 4, 5, 6)),sis.ciudadesConMayorPerdida());
             assertEquals(0 ,sis.ciudadConMayorSuperavit());
@@ -96,6 +95,6 @@ public class TestPropios {
             assertSetEquals(sis.ciudadesConMayorGanancia(),nuevosis.ciudadesConMayorGanancia());
             assertSetEquals(sis.ciudadesConMayorPerdida(),nuevosis.ciudadesConMayorPerdida());
             assertEquals(sis.ciudadConMayorSuperavit(),nuevosis.ciudadConMayorSuperavit());
-            assertEquals(sis.despacharMasAntiguos(1),nuevosis.despacharMasAntiguos(1));
+            equals(sis.despacharMasAntiguos(1).toString().compareTo(nuevosis.despacharMasAntiguos(1).toString())==0);
         }
     }   
